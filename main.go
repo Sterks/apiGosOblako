@@ -7,16 +7,39 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 	"time"
+
+	"github.com/sterks/apiGosCloud/common"
 
 	"github.com/sterks/apiGosCloud/models"
 )
 
+// ProxyURLDebug ...
+const ProxyURLDebug = "http://127.0.0.1:8888"
+
 func main() {
-	token := GetAutorize()
-	fmt.Println(token.AccessToken)
-	// AiAddMessages(token)
-	AiCreate(token)
+	tokenObj := GetAutorize()
+	AiCreate(tokenObj)
+	res := AiStatuses(tokenObj)
+	var status string
+	for status != "3" {
+		for _, r := range res {
+			if r.Status == "3" {
+				status = r.Status
+				break
+			} else {
+				status = r.Status
+				continue
+			}
+		}
+		fmt.Printf("Статус равен : %v \n", status)
+		if status == "3" {
+			break
+		}
+		time.Sleep(10 * time.Second)
+	}
+	fmt.Println("Готов к отправке файлов")
 }
 
 // GetAutorize Авторизация
@@ -31,7 +54,8 @@ func GetAutorize() models.Token {
 		log.Fatal(err)
 	}
 
-	client := &http.Client{}
+	proxyURL, err := url.Parse(ProxyURLDebug)
+	client := &http.Client{Transport: &http.Transport{Proxy: http.ProxyURL(proxyURL)}}
 	req, err2 := http.NewRequest("POST", "http://esb-dev.gosoblako.ru/services/tokens", bytes.NewReader(us))
 	if err2 != nil {
 		log.Fatal(err2)
@@ -104,16 +128,20 @@ func AiAddMessages(token models.Token) {
 //AiCreate Сервис для создания в Базе данных заявки от источника заявок Платформа Агент.
 func AiCreate(token models.Token) {
 
-	var aiCreate models.ReqCreateGaranty
-	var res models.ResCreateGaranty
+	var aiCreate models.ReqCreateGaranty   // Запрос
+	var res models.ResCreateGaranty        // Ответ
+	var founderFLDate models.FounderFLData // Подзапрос структуры
 
-	aiCreate.InternalID = "226-2020"
+	// ownerTT := make(map[string]string)
+	// var ffff models.FounderFLData
+
+	aiCreate.InternalID = "226-2025"
 	aiCreate.Completeness = "2"
-	aiCreate.EntityINN = "5263093100"
-	aiCreate.CustomerINN = "7708503727"
+	aiCreate.EntityINN = "7723475739"
+	aiCreate.CustomerINN = "5009043833"
 	aiCreate.OKOPF = "12200"
-	aiCreate.Purchase = "31908157568"
-	aiCreate.ProductType = "Гарантия по возврату аванса"
+	aiCreate.Purchase = "32009353877"
+	aiCreate.ProductType = "Гарантия исполнения обязательств по контракту"
 	aiCreate.BGStart = "14.08.2019"
 	aiCreate.BGEnd = "31.01.2021"
 	aiCreate.BGStartTender = "31.01.2021"
@@ -135,77 +163,93 @@ func AiCreate(token models.Token) {
 	aiCreate.BGSpecLNmae = "Роман"
 	aiCreate.BGSpecSName = "Александрович"
 	aiCreate.BGSpecLPost = "Генеральный директор"
-	aiCreate.BGSpecPhone = "89163451354"
-	aiCreate.BGSpecExtraPhone = "89163451354"
+	aiCreate.BGSpecPhone = "79163451354"
+	aiCreate.BGSpecExtraPhone = "79163451354"
 	aiCreate.BGSpecMail = "akolmykova@mcpuet.ru"
-	aiCreate.FounderFLData.TypeP = "Физическое лицо"
-	aiCreate.FounderFLData.INN = ""
-	aiCreate.FounderFLData.SharePercent = "100"
-	aiCreate.FounderFLData.Surname = "Борисенков"
-	aiCreate.FounderFLData.Name = "Роман"
-	aiCreate.FounderFLData.Patronomic = "Александрович"
-	aiCreate.FounderFLData.Post = "ГЕНЕРАЛЬНЫЙ ДИРЕКТОР"
-	aiCreate.FounderFLData.Founder = "Да"
-	aiCreate.FounderFLData.Manager = "Да"
-	aiCreate.FounderFLData.Sig = "Да"
-	aiCreate.FounderFLData.Birth = "09.11.1984"
-	aiCreate.FounderFLData.PBirthPlace = "ГОР. ГОРЬКИЙ"
-	aiCreate.FounderFLData.Gender = "мужской"
-	aiCreate.FounderFLData.ResidendRF = "Да"
-	aiCreate.FounderFLData.DocumentType = "паспорт РФ"
-	aiCreate.FounderFLData.Pseries = "2204/447368"
-	aiCreate.FounderFLData.PNumber = "2204/447368"
-	aiCreate.FounderFLData.PProducted = "УПРАВЛЕНИЕМ ВНУТРЕННИХ ДЕЛ НИЖЕГОРОДСКОГО РАЙОНА ГОРОДА НИЖНЕГО НОВГОРОДА"
-	aiCreate.FounderFLData.PDate = "12.03.2005"
-	aiCreate.FounderFLData.PCode = "522-005"
-	aiCreate.FounderFLData.MigrNum = ""
-	aiCreate.FounderFLData.MigrDate1 = ""
-	aiCreate.FounderFLData.MigrDate2 = ""
-	aiCreate.FounderFLData.DocumentSeries = ""
-	aiCreate.FounderFLData.DocNum = ""
-	aiCreate.FounderFLData.DocDate1 = ""
-	aiCreate.FounderFLData.DocDate2 = ""
-	aiCreate.FounderFLData.PostCode = "603081"
-	aiCreate.FounderFLData.RegionCode = "52"
-	aiCreate.FounderFLData.Region = "Нижегородская область"
-	aiCreate.FounderFLData.RType = ""
-	aiCreate.FounderFLData.Region = ""
-	aiCreate.FounderFLData.CType = "Город"
-	aiCreate.FounderFLData.City = "Нижний Новгород"
-	aiCreate.FounderFLData.TType = ""
-	aiCreate.FounderFLData.Town = ""
-	aiCreate.FounderFLData.OKTMO = ""
-	aiCreate.FounderFLData.Stype = "Улица"
-	aiCreate.FounderFLData.Street = "Краснозвездная"
-	aiCreate.FounderFLData.House = "7А"
-	aiCreate.FounderFLData.Korp = ""
-	aiCreate.FounderFLData.Building = ""
-	aiCreate.FounderFLData.Flat = "76"
-	aiCreate.FounderFLData.OKATO = "22401379000"
-	aiCreate.FounderFLData.FactualPostCode = "603081"
-	aiCreate.FounderFLData.FFactualRegionCode = ""
-	aiCreate.FounderFLData.FactualRegion = "Нижегородская область"
-	aiCreate.FounderFLData.FactualRType = ""
-	aiCreate.FounderFLData.FactualRegign = ""
-	aiCreate.FounderFLData.FactualCType = ""
-	aiCreate.FounderFLData.FactualCity = "г. Нижний Новгород"
-	aiCreate.FounderFLData.FactualTType = ""
-	aiCreate.FounderFLData.FactualTown = ""
-	aiCreate.FounderFLData.FactualTown = ""
-	aiCreate.FounderFLData.FactualStype = ""
-	aiCreate.FounderFLData.FactualStreet = "ул. Краснозвездная"
-	aiCreate.FounderFLData.FactualHouse = "д. 7А"
-	aiCreate.FounderFLData.FactualKorp = ""
-	aiCreate.FounderFLData.FactualBuilding = ""
-	aiCreate.FounderFLData.FactualFlat = ""
-	aiCreate.FounderFLData.FactualOKATO = "22401379000"
+	aiCreate.USResident = "Нет"
+	aiCreate.NameGoverning = "Нет"
+
+	// ownerTT["OWNER_TYPE_STATE"] = "Государство или государственные органы"
+	// ownerTT["OWNER_TYPE_INTERNATIONAL"] = "Международная организация"
+	// ownerTT["OWNER_TYPE_JUR"] = "Юридическое лицо"
+	// ownerTT["OWNER_TYPE_PHYS"] = "Физические лица"
+	// ownerTT["OWNER_TYPE_OTHER"] = "Прочее"
+	var ownerT = []string{"Государство или государственные органы", "Международная организация", "Юридическое лицо", "Физические лица", "Прочее"}
+	aiCreate.OwnerType = ownerT
+	aiCreate.USTaxResidents = "Нет"
+
+	founderFLDate.TypeP = "Физическое лицо"
+	founderFLDate.INN = ""
+	founderFLDate.SharePercent = "100"
+	founderFLDate.Surname = "Борисенков"
+	founderFLDate.Name = "Роман"
+	founderFLDate.Patronomic = "Александрович"
+	founderFLDate.Post = "ГЕНЕРАЛЬНЫЙ ДИРЕКТОР"
+	founderFLDate.Founder = "Да"
+	founderFLDate.Manager = "Да"
+	founderFLDate.Sig = "Да"
+	founderFLDate.Birth = "09.11.1984"
+	founderFLDate.PBirthPlace = "ГОР. ГОРЬКИЙ"
+	founderFLDate.Gender = "мужской"
+	founderFLDate.ResidendRF = "Да"
+	founderFLDate.DocumentType = "паспорт РФ"
+	founderFLDate.Pseries = "2204/447368"
+	founderFLDate.PNumber = "2204/447368"
+	founderFLDate.PProducted = "УПРАВЛЕНИЕМ ВНУТРЕННИХ ДЕЛ НИЖЕГОРОДСКОГО РАЙОНА ГОРОДА НИЖНЕГО НОВГОРОДА"
+	founderFLDate.PDate = "12.03.2005"
+	founderFLDate.PCode = "522-005"
+	founderFLDate.MigrNum = ""
+	founderFLDate.MigrDate1 = ""
+	founderFLDate.MigrDate2 = ""
+	founderFLDate.DocumentSeries = ""
+	founderFLDate.DocNum = ""
+	founderFLDate.DocDate1 = ""
+	founderFLDate.DocDate2 = ""
+	founderFLDate.PostCode = "603081"
+	founderFLDate.RegionCode = "52"
+	founderFLDate.Region = "Нижегородская область"
+	founderFLDate.RType = ""
+	founderFLDate.Region = ""
+	founderFLDate.CType = "Город"
+	founderFLDate.City = "Нижний Новгород"
+	founderFLDate.CitiZenShip = "Да"
+	founderFLDate.Region = "Да"
+	founderFLDate.TType = ""
+	founderFLDate.Town = ""
+	founderFLDate.OKTMO = ""
+	founderFLDate.Stype = "Улица"
+	founderFLDate.Street = "Краснозвездная"
+	founderFLDate.House = "7А"
+	founderFLDate.Korp = ""
+	founderFLDate.Building = ""
+	founderFLDate.Flat = "76"
+	founderFLDate.OKATO = "22401379000"
+	founderFLDate.FactualPostCode = "603081"
+	founderFLDate.FFactualRegionCode = "Да"
+	founderFLDate.FactualRegion = "Нижегородская область"
+	founderFLDate.FactualRType = ""
+	founderFLDate.FactualRegign = ""
+	founderFLDate.FactualCType = ""
+	founderFLDate.FactualCity = "г. Нижний Новгород"
+	founderFLDate.FactualTType = ""
+	founderFLDate.FactualTown = ""
+	founderFLDate.FactualTown = ""
+	founderFLDate.FactualStype = ""
+	founderFLDate.FactualStreet = "ул. Краснозвездная"
+	founderFLDate.FactualHouse = "д. 7А"
+	founderFLDate.FactualKorp = ""
+	founderFLDate.FactualBuilding = ""
+	founderFLDate.FactualFlat = ""
+	founderFLDate.FactualOKATO = "22401379000"
+	aiCreate.FounderFLData = append(aiCreate.FounderFLData, founderFLDate)
 
 	bb, err := json.Marshal(aiCreate)
 	if err != nil {
 		log.Fatal(err)
 	}
-	// fmt.Println(string(bb))
-	client := &http.Client{}
+	common.JSONPretty(bb)
+	proxyURL, err := url.Parse(ProxyURLDebug)
+	client := &http.Client{Transport: &http.Transport{Proxy: http.ProxyURL(proxyURL)}}
 	req, err := http.NewRequest("POST", "http://esb-dev.gosoblako.ru/services/ai_create", bytes.NewReader(bb))
 	if err != nil {
 		log.Fatal(err)
@@ -217,9 +261,38 @@ func AiCreate(token models.Token) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	// fmt.Println(string(br))
 	if err5 := json.Unmarshal(br, &res); err5 != nil {
 		log.Fatal(err5)
 	}
-	fmt.Println(res)
+	common.JSONPretty(br)
+	if err := ioutil.WriteFile("Task.txt", []byte(aiCreate.InternalID), 0777); err != nil {
+		log.Fatal(err)
+	}
+}
+
+// AiStatuses Получение статуса
+func AiStatuses(token models.Token) []models.ResStatus {
+	InternalID, err := ioutil.ReadFile("Task.txt")
+	var arTask []string
+	var res []models.ResStatus
+	arTask = append(arTask, string(InternalID))
+	bb, err := json.Marshal(arTask)
+	proxyURL, err := url.Parse(ProxyURLDebug)
+	client := &http.Client{Transport: &http.Transport{Proxy: http.ProxyURL(proxyURL)}}
+	req, err := http.NewRequest("POST", "http://esb-dev.gosoblako.ru/services/ai_statuses", bytes.NewReader(bb))
+	if err != nil {
+		log.Fatal(err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("x-auth-token", token.AccessToken)
+	response, err := client.Do(req)
+	br, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err5 := json.Unmarshal(br, &res); err5 != nil {
+		log.Fatal(err5)
+	}
+	common.JSONPretty(br)
+	return res
 }

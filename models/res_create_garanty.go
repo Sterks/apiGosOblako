@@ -9,11 +9,17 @@ type ResCreateGaranty struct {
 	Status     string `json:"status"`
 	Owner      string `json:"owner"`
 	InternalID string `json:"internal_id"`
+	// Messages   Mess   `json:"message"`
 }
 
 // SubMessageData ...
 type SubMessageData struct {
-	FormatValidation ReqCreateGaranty
+	FormatValidation ReqCreateGaranty `json:"formatValidation"`
+}
+
+// FormatValidation ...
+type FormatValidation struct {
+	Message Mess `json:"message"`
 }
 
 // Mess ...

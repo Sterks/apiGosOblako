@@ -2,38 +2,45 @@ package models
 
 // ReqCreateGaranty ...
 type ReqCreateGaranty struct {
-	InternalID           string  `json:"internal_id"`             // Номер заявки
-	Completeness         string  `json:"completeness"`            // Полнота данных
-	EntityINN            string  `json:"entity_inn"`              // ИНН Организации-заявителя
-	CustomerINN          string  `json:"customer_inn"`            // ИНН заказчика
-	OKOPF                string  `json:"okopf"`                   // ОКОПФ
-	Purchase             string  `json:"purchase"`                // Номер закупки
-	ProductType          string  `json:"product_type"`            // БГ: Гарантия исполнения обязательств по контракту/ Гарантия по возврату аванса / Гарантия, обеспечивающая обязательства в период гарантийного срока/ Гарантия на участие
-	BGStart              string  `json:"bg_start"`                // Дата выдачи
-	BGEnd                string  `json:"bg_end"`                  // Дата окончания
-	BGStartTender        string  `json:"bg_start_tender"`         // Дата выдачи Гарантии на участие
-	BGEndTender          string  `json:"bg_end_tender"`           // Дата окончания Гарантии на участие
-	BGEndContract        string  `json:"bg_end_contract"`         // Дата окончания контракта
-	BegPrice             float32 `json:"beg_price"`               // НМЦ
-	FinalPrice           float32 `json:"final_price"`             // Предложенная цена контракта
-	BiGPartSum           float32 `json:"bid_partSum"`             // Требуемая сумма //обязательно, если bg_type не равен "Гарантия на участие"
-	BiGPartSumTender     float32 `json:"bid_partSum_tender"`      // Требуемая сумма Гарантии на участие //обязательно, если bg_type равен "Гарантия на участие"
-	IsAvans              string  `json:"is_avans"`                // Значения: Да/Нет. По умолчанию - Нет
-	IsBeneficiaryBG      string  `json:"is_beneficiary_bg"`       // БГ по форме бенефициара // Значения: Да/Нет. По умолчанию - Нет
-	IsNondisscusWriteOff string  `json:"is_nondisscus_write_off"` // Условие бесспорного списания // Значения: Да/Нет. По умолчанию - Нет
-	TaxMethod            string  `json:"tax_method"`              // Форма налогообложения // Значения: Общая/УСН. По умолчанию - Нет
-	FinPeriod            string  `json:"fin_period"`              // Период отчетности
-	Account              string  `json:"account"`                 // Расчетный счет
-	BIK                  string  `json:"bik"`                     // BIK
-	BankName             string  `json:"bank_name"`               // Наименование банка
-	BGSpecLNmae          string  `json:"bg_spec_l_name"`          // Контактное лицо имя
-	BGSpecFName          string  `json:"bg_spec_f_name"`          // Контактное лицо фамилия
-	BGSpecSName          string  `json:"bg_spec_s_name"`          // Контактное лицо отчество
-	BGSpecLPost          string  `json:"bg_spec_l_post"`          // Контактное лицо должность
-	BGSpecPhone          string  `json:"bg_spec_phone"`           // Контактное лицо рабочий телефон
-	BGSpecExtraPhone     string  `json:"bg_spec_extra_phone"`     // Контактное лицо Мобильный телефон
-	BGSpecMail           string  `json:"bg_spec_mail"`
-	FounderFLData        FounderFLData
+	InternalID           string          `json:"internal_id"`             // Номер заявки
+	AgentID              string          `json:"agent_id"`                // ID агента в ГО
+	Completeness         string          `json:"completeness"`            // Полнота данных
+	EntityINN            string          `json:"entity_inn"`              // ИНН Организации-заявителя
+	CustomerINN          string          `json:"customer_inn"`            // ИНН заказчика
+	JointCustomerINN1    string          `json:"joint_customer_inn"`      // Заказчик 1
+	OKOPF                string          `json:"okopf"`                   // ОКОПФ
+	Purchase             string          `json:"purchase"`                // Номер закупки
+	ProductType          string          `json:"product_type"`            // БГ: Гарантия исполнения обязательств по контракту/ Гарантия по возврату аванса / Гарантия, обеспечивающая обязательства в период гарантийного срока/ Гарантия на участие
+	BGOwner              string          `json:"bg_owner"`                // Код продукта в ГО
+	BGStart              string          `json:"bg_start"`                // Дата выдачи
+	BGEnd                string          `json:"bg_end"`                  // Дата окончания
+	BGStartTender        string          `json:"bg_start_tender"`         // Дата выдачи Гарантии на участие
+	BGEndTender          string          `json:"bg_end_tender"`           // Дата окончания Гарантии на участие
+	BGEndContract        string          `json:"bg_end_contract"`         // Дата окончания контракта
+	BegPrice             float32         `json:"beg_price"`               // НМЦ
+	FinalPrice           float32         `json:"final_price"`             // Предложенная цена контракта
+	BiGPartSum           float32         `json:"bid_partSum"`             // Требуемая сумма //обязательно, если bg_type не равен "Гарантия на участие"
+	BiGPartSumTender     float32         `json:"bid_partSum_tender"`      // Требуемая сумма Гарантии на участие //обязательно, если bg_type равен "Гарантия на участие"
+	IsAvans              string          `json:"is_avans"`                // Значения: Да/Нет. По умолчанию - Нет
+	IsBeneficiaryBG      string          `json:"is_beneficiary_bg"`       // БГ по форме бенефициара // Значения: Да/Нет. По умолчанию - Нет
+	IsNondisscusWriteOff string          `json:"is_nondisscus_write_off"` // Условие бесспорного списания // Значения: Да/Нет. По умолчанию - Нет
+	TaxMethod            string          `json:"tax_method"`              // Форма налогообложения // Значения: Общая/УСН. По умолчанию - Нет
+	FinPeriod            string          `json:"fin_period"`              // Период отчетности
+	USResident           string          `json:"US_resident"`             // Является ли Ваша организация налоговым резидентом США? Принимает заначения: Да/Нет
+	NameGoverning        string          `json:"name_governing"`          // Наименование органа управления. Принимает заначения:Общее собрание акционеров /Общее собрание участников /Иное
+	OwnerType            []string        `json:"owner_type"`              // Тип владельца Вашей организации. Принимает любые заначения из списка:
+	USTaxResidents       string          `json:"US_Tax_Residents"`        //	Налоговые резиденты США. Принимает заначения: Да - Я удостоверяю, что среди бенефициарных владельцев организации – физических лиц присутствуют налоговые резиденты США c долей владения от 10% и более Нет -Я удостоверяю, что среди бенефициарных владельцев организации – физических лиц отсутствуют налоговые резиденты США c долей владения от 10% и более
+	Account              string          `json:"account"`                 // Расчетный счет
+	BIK                  string          `json:"bik"`                     // BIK
+	BankName             string          `json:"bank_name"`               // Наименование банка
+	BGSpecLNmae          string          `json:"bg_spec_l_name"`          // Контактное лицо имя
+	BGSpecFName          string          `json:"bg_spec_f_name"`          // Контактное лицо фамилия
+	BGSpecSName          string          `json:"bg_spec_s_name"`          // Контактное лицо отчество
+	BGSpecLPost          string          `json:"bg_spec_l_post"`          // Контактное лицо должность
+	BGSpecPhone          string          `json:"bg_spec_phone"`           // Контактное лицо рабочий телефон
+	BGSpecExtraPhone     string          `json:"bg_spec_extra_phone"`     // Контактное лицо Мобильный телефон
+	BGSpecMail           string          `json:"bg_spec_mail"`
+	FounderFLData        []FounderFLData `json:"foundersFL"`
 }
 
 // FounderFLData ...
@@ -72,6 +79,7 @@ type FounderFLData struct {
 	Reign              string `json:"reign"`                 // Район
 	CType              string `json:"ctype"`                 // Город (вид)
 	City               string `json:"city"`                  // Город
+	CitiZenShip        string `json:"citizenship"`           // Гражданство (по паспорту)
 	TType              string `json:"ttype"`                 // Населенный пункт (вид)
 	Town               string `json:"town"`                  // Населенный пункт
 	OKTMO              string `json:"oktmo"`                 // ОКТМО
@@ -88,7 +96,7 @@ type FounderFLData struct {
 	FactualRType       string `json:"factual_rtype"`         // Район (вид)
 	FactualRegign      string `json:"factual_reign"`         // Район (вид)
 	FactualCType       string `json:"factual_ctype"`         // Район
-	FactualCity        string `json:"factual_city"`          //  Город (вид)
+	FactualCity        string `json:"factual_city"`          // Город (вид)
 	FactualTType       string `json:"factual_ttype"`         // Населенный пункт (вид)
 	FactualTown        string `json:"factual_town"`          // Населенный пункт
 	FactualOKTMO       string `json:"factual_oktmo"`         // ОКТМО
@@ -99,4 +107,5 @@ type FounderFLData struct {
 	FactualBuilding    string `json:"factual_building"`      // Строение
 	FactualFlat        string `json:"factual_flat"`          // Квартира (офис)
 	FactualOKATO       string `json:"factual_okato"`         // ОКАТО
+	USResident         string `json:"US_resident"`
 }
